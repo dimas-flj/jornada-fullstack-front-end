@@ -42,7 +42,6 @@ const InputRangeSong = ({
 				}
 			});
 
-		console.log("liberou controles.");
 		setControlsReleased(true);
 		setIsPlaying(!isPlaying);
 

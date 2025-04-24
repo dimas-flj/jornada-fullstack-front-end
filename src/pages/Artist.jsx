@@ -14,13 +14,15 @@ const Artist = () => {
 	const { id } = useParams();
 
 	useEffect(() => {
-		getSongsByArtistId(id).then((artistObj) => {
-			const localArtist = artistObj[0];
-			setArtist(localArtist);
+		if (id !== undefined) {
+			getSongsByArtistId(id).then((artistObj) => {
+				const localArtist = artistObj[0];
+				setArtist(localArtist);
 
-			const songs_array = localArtist.songs;
-			setSongs(songs_array);
-		});
+				const songs_array = localArtist.songs;
+				setSongs(songs_array);
+			});
+		}
 	}, [id]);
 
 	return (
