@@ -117,8 +117,6 @@ const InputRangeSong = ({
 			// e.keyCode === 32 (space key)
 			if (e.keyCode === 32) {
 				setIsPlaying(!isPlaying);
-				// setPlayPause(!isPlaying);
-				// setPlayPauseChanged(true);
 			}
 
 			if (e.keyCode === 37 || e.keyCode === 39) {
