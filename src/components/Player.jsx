@@ -50,7 +50,7 @@ const Player = ({ id, random }) => {
 	const [forwardSongName, setForwardSongName] = useState();
 	const [randomIdForward, setRandomIdForward] = useState();
 	const [toolTipVolume, setToolTipVolume] = useState();
-	const [isPlaying, setIsPlaying] = useState(true);
+	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [duration, setDuration] = useState(0);
 	const [song, setSong] = useState({});

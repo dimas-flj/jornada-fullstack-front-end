@@ -18,6 +18,7 @@ const InputRangeSong = ({
 }) => {
 	const [rangeSongBackgroundProgress, setRangeSongBackgroundProgress] = useState();
 	const [lastInputValue, setLastInputValue] = useState(0);
+	const [controlsReleased, setControlsReleased] = useState(false);
 
 	const rangeProgressbar = useRef();
 	const audioPlayer = useRef();
@@ -29,8 +30,8 @@ const InputRangeSong = ({
 
 		audioPlayer.current
 			.play()
-			// .then(() => {
-			// 	console.log("play() -> OK");
+			// .then((self) => {
+			// self.play();
 			// })
 			.catch((error) => {
 				const message = error.message;
@@ -41,6 +42,8 @@ const InputRangeSong = ({
 				}
 			});
 
+		console.log("liberou controles.");
+		setControlsReleased(true);
 		setIsPlaying(!isPlaying);
 
 		const range = rangeProgressbar.current;
@@ -147,20 +150,22 @@ const InputRangeSong = ({
 
 	// Handle external controllers
 	useEffect(() => {
-		isPlaying ? audioPlayer.current.play() : audioPlayer.current.pause();
+		if (controlsReleased) {
+			isPlaying ? audioPlayer.current.play() : audioPlayer.current.pause();
 
-		audioPlayer.current.volume = rangeVolumeValue / 10;
+			audioPlayer.current.volume = rangeVolumeValue / 10;
 
-		audioPlayer.current.muted = isMuted;
+			audioPlayer.current.muted = isMuted;
 
-		if (goBackTenSeconds) {
-			fastBackward();
+			if (goBackTenSeconds) {
+				fastBackward();
+			}
+
+			if (advanceTenSeconds) {
+				fastForward();
+			}
 		}
-
-		if (advanceTenSeconds) {
-			fastForward();
-		}
-	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, songAudio]);
+	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, songAudio, controlsReleased]);
 
 	// handle keycode event
 	useEffect(() => {
