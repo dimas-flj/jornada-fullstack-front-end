@@ -10,6 +10,7 @@ export const config = {
 		},
 	},
 	back_end: {
-		dominio: "http://localhost:8090",
+		// dominio: "http://localhost:8090",
+		dominio: "https://jornada-fullstack-back-end.onrender.com",
 	},
 };
