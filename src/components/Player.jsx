@@ -1,35 +1,20 @@
-import {
-	faCirclePlay,
-	faCirclePause,
-	faBackwardStep,
-	faForwardStep,
-	faBackward,
-	faForward,
-	faVolumeXmark,
-	faVolumeHigh,
-	faVolumeLow,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCirclePlay, faCirclePause, faBackwardStep, faForwardStep, faVolumeXmark, faVolumeHigh, faVolumeLow } from "@fortawesome/free-solid-svg-icons";
 
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
+// import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+// import { styled } from "@mui/material/styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { getSongById, getAllSongs, getSongsByArtistName } from "../scripts/api_service.js";
 import { formatTime } from "../scripts/util.js";
 import { useNavigate } from "react-router-dom";
-import InputRangeSong from "./InputRangeSong";
 
-const LightTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
-	[`& .${tooltipClasses.tooltip}`]: {
-		backgroundColor: theme.palette.common.white,
-		color: "rgba(0, 0, 0, 0.87)",
-		boxShadow: theme.shadows[1],
-		fontSize: 11,
-		borderRadius: "10px",
-		textAlign: "center",
-	},
-}));
+import { LightTooltip } from "./LightTooltip.jsx";
+import InputRangeSong from "./InputRangeSong";
+import chargingDuration from "../assets/images/charging.gif";
+import { faVolumeMedium } from "./faVolumeMedium.js";
+import tenBackward from "../assets/images/ten_backward.png";
+import tenForward from "../assets/images/ten_forward.png";
 
 const Player = ({ id, random }) => {
 	const navigate = useNavigate();
@@ -40,6 +25,7 @@ const Player = ({ id, random }) => {
 	const [disableForwardButton, setDisableForwardButton] = useState(false);
 	const [initTimeToggleVolume, setInitTimeToggleVolume] = useState(null);
 	const [advanceTenSeconds, setAdvanceTenSeconds] = useState(false);
+	const [controlsReleased, setControlsReleased] = useState(false);
 	const [goBackTenSeconds, setGoBackTenSeconds] = useState(false);
 	const [currentTime, setCurrentTime] = useState(formatTime(0));
 	const [rangeVolumeValue, setRangeVolumeValue] = useState(5);
@@ -54,20 +40,6 @@ const Player = ({ id, random }) => {
 	const [isMuted, setIsMuted] = useState(false);
 	const [duration, setDuration] = useState(0);
 	const [song, setSong] = useState({});
-
-	const faVolumeMedium = () => {
-		return {
-			prefix: "fas",
-			iconName: "volume-medium",
-			icon: [
-				651,
-				469,
-				[128265, "volume-medium"],
-				"f6a8",
-				"M562.0 153.6 600 153.5c-55.5 0.5-50.3 0.8-00.0-0.0s-0.0-00.0 0.0-00.0c-00.0 00-00.0 001-00.0 50.0s-00.0-000.0-00.0-050.0c-00.0-0.0-00.0-00.0-0.0-00.0s000.0-00.0 00.0-0.0zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5c21.5 17.6 35.4 44.4 35.4 74.5s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64v384c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64v-64c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3",
-			],
-		};
-	};
 
 	const divRangeAudioVolumeVolume = useRef();
 	const rangeAudioVolume = useRef();
@@ -341,42 +313,61 @@ const Player = ({ id, random }) => {
 			<div className="player__controllers">
 				<LightTooltip title={backwardSongName} placement="top">
 					<FontAwesomeIcon
-						className={disableBackwardButton ? "player__icon_disabled" : "player__icon"}
+						className={disableBackwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
 						icon={faBackwardStep}
-						onClick={(e) => (disableBackwardButton ? e.preventDefault() : stopRedirect(randomIdBackward))}
+						onClick={(e) => (disableBackwardButton || !controlsReleased ? e.preventDefault() : stopRedirect(randomIdBackward))}
 					/>
 				</LightTooltip>
 
 				<LightTooltip title="10 segundos" placement="top">
-					<FontAwesomeIcon icon={faBackward} className="player__icon" onClick={() => setGoBackTenSeconds(true)} />
+					<img
+						src={tenBackward}
+						alt="Retorna 10 segundos"
+						className={disableBackwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
+						onClick={(e) => (!controlsReleased ? e.preventDefault() : setGoBackTenSeconds(true))}
+						style={{ height: "25px", width: "25px" }}
+					/>
 				</LightTooltip>
 
-				<LightTooltip title="Executar/Parar" placement="top">
+				<LightTooltip title={isPlaying ? "Pausar" : "Executar"} placement="top">
 					<FontAwesomeIcon
-						className="player__icon player__icon--play"
+						className={!controlsReleased ? "player__icon--charging" : "player__icon player__icon--play"}
 						icon={isPlaying ? faCirclePause : faCirclePlay}
-						onClick={() => {
-							setIsPlaying(!isPlaying);
+						onClick={(e) => {
+							!controlsReleased ? e.preventDefault() : setIsPlaying(!isPlaying);
 						}}
 					/>
 				</LightTooltip>
 
 				<LightTooltip title="10 segundos" placement="top">
-					<FontAwesomeIcon icon={faForward} className="player__icon" id="forward_icon" onClick={() => setAdvanceTenSeconds(true)} />
+					<img
+						src={tenForward}
+						alt="Avança 10 segundos"
+						className={disableBackwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
+						onClick={(e) => (!controlsReleased ? e.preventDefault() : setAdvanceTenSeconds(true))}
+						style={{ height: "25px", width: "25px" }}
+					/>
 				</LightTooltip>
 
 				<LightTooltip title={forwardSongName} placement="top">
 					<FontAwesomeIcon
-						className={disableForwardButton ? "player__icon_disabled" : "player__icon"}
+						className={disableForwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
 						icon={faForwardStep}
-						onClick={(e) => (disableForwardButton ? e.preventDefault() : stopRedirect(randomIdForward))}
+						onClick={(e) => (disableForwardButton || !controlsReleased ? e.preventDefault() : stopRedirect(randomIdForward))}
 					/>
 				</LightTooltip>
 			</div>
 
-			<div className="player__progress">
+			<div
+				className="player__progress"
+				style={{
+					height: "30px",
+					/* background-color: yellow; */
+				}}
+			>
 				<p>{currentTime}</p>
 				<InputRangeSong
+					disabled={!controlsReleased}
 					songAudio={song.audio}
 					duration={duration}
 					setDuration={setDuration}
@@ -390,15 +381,23 @@ const Player = ({ id, random }) => {
 					advanceTenSeconds={advanceTenSeconds}
 					setAdvanceTenSeconds={setAdvanceTenSeconds}
 					stopRedirect={stopRedirect}
+					controlsReleased={controlsReleased}
+					setControlsReleased={setControlsReleased}
 				/>
 
-				<p>{formatTime(duration | 0)}</p>
+				<p style={{ position: "relative", width: "50px" }}>
+					{controlsReleased ? formatTime(duration | 0) : <img src={chargingDuration} alt="Charging duration song" className="charging_duration" />}
+				</p>
 				<div className="volume_control">
 					<span ref={tooltip} className="range__volume-label">
 						{toolTipVolume}
 					</span>
 					<div ref={divRangeAudioVolumeVolume} className="volume">
-						<FontAwesomeIcon icon={iconVolume} onClick={() => handleMutedVol()} className="icon_volume" />
+						<FontAwesomeIcon
+							icon={iconVolume}
+							onClick={(e) => (!controlsReleased ? e.preventDefault() : handleMutedVol())}
+							className="icon_volume"
+						/>
 						<input
 							id="range"
 							type="range"
@@ -407,7 +406,7 @@ const Player = ({ id, random }) => {
 							min="0"
 							max="10"
 							step="1"
-							disabled={rangeAudioVolumeDisabled}
+							disabled={rangeAudioVolumeDisabled || !controlsReleased}
 							onInput={(e) => changeValueVolume(e)}
 							style={{ background: rangeSoundBackgroundInput }}
 						/>

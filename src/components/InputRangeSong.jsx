@@ -15,10 +15,11 @@ const InputRangeSong = ({
 	advanceTenSeconds,
 	setAdvanceTenSeconds,
 	stopRedirect,
+	controlsReleased,
+	setControlsReleased,
 }) => {
 	const [rangeSongBackgroundProgress, setRangeSongBackgroundProgress] = useState();
 	const [lastInputValue, setLastInputValue] = useState(0);
-	const [controlsReleased, setControlsReleased] = useState(false);
 
 	const rangeProgressbar = useRef();
 	const audioPlayer = useRef();
@@ -31,7 +32,7 @@ const InputRangeSong = ({
 		audioPlayer.current
 			.play()
 			// .then((self) => {
-			// self.play();
+			// 	self.play();
 			// })
 			.catch((error) => {
 				const message = error.message;
@@ -42,14 +43,15 @@ const InputRangeSong = ({
 				}
 			});
 
-		setControlsReleased(true);
-		setIsPlaying(!isPlaying);
-
 		const range = rangeProgressbar.current;
 		range.value = 0;
 
 		const value = ((range.value - range.min) / (range.max - range.min)) * 100;
 		setRangeSongBackgroundProgress(`linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`);
+
+		// console.log("Libera controles");
+		setControlsReleased(true);
+		setIsPlaying(!isPlaying);
 	};
 
 	const onSongTimeUpdate = (e) => {
@@ -218,6 +220,7 @@ const InputRangeSong = ({
 					defaultValue="0"
 					onInput={(e) => changeCurrentTrailSong(Number(e.target.value))}
 					style={{ background: rangeSongBackgroundProgress }}
+					disabled={!controlsReleased}
 				/>
 				<audio
 					ref={audioPlayer}

@@ -7,9 +7,13 @@ import { getSongsByArtistId } from "../scripts/api_service";
 import SongList from "../components/SongList";
 
 const Artist = () => {
-	const randomIdFromArtist = useRef(0);
+	const [randomIdFromArtist, setRandomIdFromArtist] = useState("0");
+	const [songNameFromArtist, setSongNameFromArtist] = useState();
 	const [artist, setArtist] = useState({});
 	const [songs, setSongs] = useState([]);
+
+	const toLabelSong = useRef();
+	const labelSong = useRef();
 
 	const { id } = useParams();
 
@@ -21,6 +25,19 @@ const Artist = () => {
 
 				const songs_array = localArtist.songs;
 				setSongs(songs_array);
+
+				const randomIndex = Math.floor(Math.random() * (songs_array.length - 1));
+
+				setRandomIdFromArtist(songs_array[randomIndex]._id);
+				setSongNameFromArtist(songs_array[randomIndex].name);
+			});
+
+			toLabelSong.current.addEventListener("mouseover", () => {
+				labelSong.current.style.opacity = 1;
+			});
+
+			toLabelSong.current.addEventListener("mouseout", () => {
+				labelSong.current.style.opacity = 0;
 			});
 		}
 	}, [id]);
@@ -38,9 +55,14 @@ const Artist = () => {
 				<h2>Populares</h2>
 				<SongList songsArray={songs} />
 			</div>
-			<Link to={`/song/${randomIdFromArtist.current}`}>
-				<FontAwesomeIcon className="single-item__icon single-item__icon--artist" icon={faCirclePlay} />
-			</Link>
+			<div>
+				<div className="single-item__icon--label" ref={labelSong}>
+					{songNameFromArtist}
+				</div>
+				<Link to={`/song/${randomIdFromArtist}`} ref={toLabelSong}>
+					<FontAwesomeIcon className="single-item__icon single-item__icon--artist" icon={faCirclePlay} />
+				</Link>
+			</div>
 		</div>
 	);
 };
