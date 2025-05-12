@@ -8,3 +8,97 @@ export const formatTime = (timeInSeconds) => {
 
 	return `${minutes}:${seconds}`;
 };
+
+export const isMobile = () => {
+	let isMobile = true;
+	try {
+		isMobile = window.navigator.userAgentData.mobile;
+		// eslint-disable-next-line no-unused-vars
+	} catch (error) {
+		isMobile = Math.min(window.screen.width, window.screen.height) < 768;
+	}
+	return isMobile;
+};
+
+const getRandomIndex = (songsArray, id, lastIndex) => {
+	const currentIndexFromIdSong = songsArray.map((elem) => elem._id).indexOf(id);
+	let found = false;
+	let index;
+	while (!found) {
+		index = Math.floor(Math.random() * (songsArray.length - 1));
+		if (index !== currentIndexFromIdSong && index !== lastIndex && songsArray[index] !== undefined) {
+			found = true;
+		}
+	}
+
+	return index;
+};
+
+export const getRandomizeProperties = (songsArray, id) => {
+	let randomIndexBackward, randomIndexForward;
+
+	let _idBackward,
+		_idForward,
+		_backwardSongName,
+		_forwardSongName = null;
+
+	let _disableBackwardButton,
+		_disableForwardButton = false;
+
+	if (songsArray !== undefined && songsArray.length > 0) {
+		const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
+		if (randomized) {
+			randomIndexBackward = getRandomIndex(songsArray, id, -1);
+			randomIndexForward = getRandomIndex(songsArray, id, randomIndexBackward);
+
+			_idBackward = songsArray[randomIndexBackward]._id;
+			_idForward = songsArray[randomIndexForward]._id;
+			_backwardSongName = songsArray[randomIndexBackward].name;
+			_forwardSongName = songsArray[randomIndexForward].name;
+		} else {
+			const currentIndexFromIdSong = songsArray.map((elem) => elem._id).indexOf(id);
+
+			// if is the first song on the list
+			if (currentIndexFromIdSong == 0) {
+				_disableBackwardButton = true;
+
+				const forwardSong = songsArray[currentIndexFromIdSong + 1];
+				if (forwardSong !== undefined) {
+					_idForward = forwardSong._id;
+					_forwardSongName = forwardSong.name;
+				} else {
+					_disableForwardButton = true;
+				}
+			}
+			// if is the last song on the list
+			else if (currentIndexFromIdSong === songsArray.length - 1) {
+				_disableForwardButton = true;
+
+				const backwardSong = songsArray[currentIndexFromIdSong - 1];
+				if (backwardSong !== undefined) {
+					_idBackward = backwardSong._id;
+					_backwardSongName = backwardSong.name;
+				} else {
+					_disableBackwardButton = true;
+				}
+			} else {
+				const backwardSong = songsArray[currentIndexFromIdSong - 1];
+				_idBackward = backwardSong._id;
+				_backwardSongName = backwardSong.name;
+
+				const forwardSong = songsArray[currentIndexFromIdSong + 1];
+				_idForward = forwardSong._id;
+				_forwardSongName = forwardSong.name;
+			}
+		}
+	}
+
+	return {
+		idBackward: _idBackward,
+		idForward: _idForward,
+		songNameBackward: _backwardSongName,
+		songNameForward: _forwardSongName,
+		disableBackwardButton: _disableBackwardButton,
+		disableForwardButton: _disableForwardButton,
+	};
+};

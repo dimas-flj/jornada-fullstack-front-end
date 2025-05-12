@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { formatTime } from "../scripts/util";
 
 const InputRangeSong = ({
-	songAudio,
+	songUrl,
 	duration,
 	setDuration,
 	isPlaying,
@@ -18,7 +18,6 @@ const InputRangeSong = ({
 	controlsReleased,
 	setControlsReleased,
 }) => {
-	const [rangeSongBackgroundProgress, setRangeSongBackgroundProgress] = useState();
 	const [lastInputValue, setLastInputValue] = useState(0);
 
 	const rangeProgressbar = useRef();
@@ -26,32 +25,17 @@ const InputRangeSong = ({
 	const divAdvisor = useRef();
 
 	const resetControllers = () => {
+		audioPlayer.current.pause();
 		setDuration(audioPlayer.current.duration | 0);
 		setCurrentTime(formatTime(0));
-
-		audioPlayer.current
-			.play()
-			// .then((self) => {
-			// 	self.play();
-			// })
-			.catch((error) => {
-				const message = error.message;
-				// console.log("message: " + message);
-				if (message.includes("The play method") || message.includes("interact with the document first")) {
-					// console.log('encontrou "The play method" ou "interact with the document first"');
-					divAdvisor.current.style.display = "block";
-				}
-			});
+		setControlsReleased(true);
+		setIsPlaying(!isPlaying);
 
 		const range = rangeProgressbar.current;
 		range.value = 0;
 
 		const value = ((range.value - range.min) / (range.max - range.min)) * 100;
-		setRangeSongBackgroundProgress(`linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`);
-
-		// console.log("Libera controles");
-		setControlsReleased(true);
-		setIsPlaying(!isPlaying);
+		rangeProgressbar.current.style.background = `linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`;
 	};
 
 	const onSongTimeUpdate = (e) => {
@@ -64,7 +48,7 @@ const InputRangeSong = ({
 		setLastInputValue(Number(range.value));
 
 		const value = ((range.value - range.min) / (range.max - range.min)) * 100;
-		setRangeSongBackgroundProgress(`linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`);
+		rangeProgressbar.current.style.background = `linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`;
 	};
 
 	const fastBackward = useCallback(() => {
@@ -166,7 +150,7 @@ const InputRangeSong = ({
 				fastForward();
 			}
 		}
-	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, songAudio, controlsReleased]);
+	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, controlsReleased]);
 
 	// handle keycode event
 	useEffect(() => {
@@ -177,20 +161,8 @@ const InputRangeSong = ({
 
 	return (
 		<>
-			<div
-				ref={divAdvisor}
-				style={{
-					position: "absolute",
-					display: "none",
-					left: "0px",
-					top: "0px",
-					zIndex: "1",
-					width: "100%",
-					height: "100vh",
-					backgroundColor: "#254705",
-				}}
-			>
-				<div style={{ textAlign: "center", width: "50%", color: "white", marginLeft: "25%", marginTop: "25%", transform: "translate(0, -25%)" }}>
+			<div ref={divAdvisor} className="player__advisor">
+				<div className="player__advisor-banner">
 					This banner is being displayed in view of some browser security rules that do not allow audio to be played automatically, without the user
 					interacting with the page.
 					<br />
@@ -219,12 +191,11 @@ const InputRangeSong = ({
 					max={duration}
 					defaultValue="0"
 					onInput={(e) => changeCurrentTrailSong(Number(e.target.value))}
-					style={{ background: rangeSongBackgroundProgress }}
 					disabled={!controlsReleased}
 				/>
 				<audio
 					ref={audioPlayer}
-					src={songAudio}
+					src={songUrl}
 					onEnded={() => stopRedirect()}
 					onLoadedMetadata={() => resetControllers()}
 					onTimeUpdate={(e) => onSongTimeUpdate(e)}

@@ -4,7 +4,7 @@ import Player from "../components/Player";
 import { getArtistSongBySongId } from "../scripts/api_service.js";
 
 const Song = () => {
-	const { id, random } = useParams();
+	const { id, origin } = useParams();
 
 	const [artist, setArtist] = useState({});
 	const [song, setSong] = useState({});
@@ -14,7 +14,14 @@ const Song = () => {
 			const artistAndSong = current[0];
 
 			setArtist(artistAndSong);
-			setSong(artistAndSong.song);
+			const song = artistAndSong.song;
+
+			if (song.audio.endsWith(".mp3")) {
+				song.audio = `${song.audio}?t=${Date.now()}`;
+			} else {
+				song.audio = `${song.audio}&t=${Date.now()}`;
+			}
+			setSong(song);
 		});
 	}, [id]);
 
@@ -26,20 +33,15 @@ const Song = () => {
 				</div>
 			</div>
 			<div className="song__bar">
-				<div
-					style={{
-						textAlign: "left",
-						width: "100%",
-					}}
-				>
+				<div className="song__bar-link">
 					<Link to={`/artist/${artist._id}`} className="song__artist-image">
 						<img width={75} height={75} src={artist.image} alt={`Imagem do Artista ${artist.name}`} />
 					</Link>
 				</div>
 
-				<Player id={id} random={random} />
+				<Player id={id} origin={origin} songObj={song} />
 
-				<div style={{ textAlign: "center" }}>
+				<div className="song__bar-songname">
 					<p className="song__name">{song.name}</p>
 					<p>{song.artist}</p>
 				</div>

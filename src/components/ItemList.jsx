@@ -4,18 +4,18 @@ import SingleItem from "./SingleItem";
 import { config } from "../scripts/config";
 import { useEffect, useState } from "react";
 
-const ItemList = ({ type }) => {
+const ItemList = ({ origin }) => {
 	const [itemsArray, setItemsArray] = useState([]);
 
-	const items = type === "artists" ? config.contents.artists.items : config.contents.songs.items;
-	const title = type === "artists" ? config.contents.artists.title : config.contents.songs.title;
+	const items = origin === "artists" ? config.contents.artists.items : config.contents.songs.items;
+	const title = origin === "artists" ? config.contents.artists.title : config.contents.songs.title;
 
 	const { pathname } = useLocation();
 	const isHome = pathname === "/";
 	const finalAmountItems = isHome ? items : Infinity;
 
 	useEffect(() => {
-		if (type === "artists") {
+		if (origin === "artists") {
 			getAllArtists().then((artistArray) => {
 				setItemsArray(artistArray);
 			});
@@ -24,7 +24,7 @@ const ItemList = ({ type }) => {
 				setItemsArray(songsArray);
 			});
 		}
-	}, [type, setItemsArray]);
+	}, [origin, setItemsArray]);
 
 	return (
 		<div className="item-list">
@@ -42,8 +42,8 @@ const ItemList = ({ type }) => {
 			<div className="item-list__container">
 				{itemsArray
 					.filter((currentValue, index) => index < finalAmountItems)
-					.map((currObj, index) => (
-						<SingleItem key={`${title}_${index}`} itemArray={currObj} />
+					.map((item, index) => (
+						<SingleItem key={`${title}_${index}`} origin={origin} item={item} />
 					))}
 			</div>
 		</div>

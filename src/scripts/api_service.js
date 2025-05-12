@@ -1,10 +1,15 @@
 import axios from "axios";
-import { config } from "./config";
+import { config } from "./config.js";
 
 const dominio = config.back_end.dominio;
 
 export const getAllArtists = async () => {
 	const array = await axios.get(`${dominio}/artists/`);
+	return array?.data;
+};
+
+export const getArtistsWithSongs = async () => {
+	const array = await axios.get(`${dominio}/artists/songs`);
 	return array?.data;
 };
 
@@ -36,6 +41,11 @@ export const getArtistSongBySongId = async (id) => {
 export const getAllSongs = async () => {
 	const array = await axios.get(`${dominio}/songs/`);
 	return array?.data;
+};
+
+export const getSongsWithArtist = async () => {
+	const song = await axios.get(`${dominio}/songs/artist`);
+	return song?.data;
 };
 
 export const getOnlySongsByArtistName = async (name) => {
