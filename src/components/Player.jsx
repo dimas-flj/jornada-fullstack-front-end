@@ -15,7 +15,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { getAllSongs, getSongsByArtistName } from "../scripts/api_service.js";
 import { formatTime, getRandomizeProperties, isMobile } from "../scripts/util.js";
-import { useNavigate } from "react-router-dom";
 
 import { LightTooltip } from "./LightTooltip.jsx";
 import InputRangeSong from "./InputRangeSong";
@@ -23,6 +22,7 @@ import chargingDuration from "../assets/images/charging.gif";
 import { faVolumeMedium } from "./faVolumeMedium.js";
 import tenBackward from "../assets/images/ten_backward.png";
 import tenForward from "../assets/images/ten_forward.png";
+import { useNavigate } from "react-router-dom";
 
 const Player = ({ id, origin, songObj }) => {
 	const navigate = useNavigate();
@@ -32,7 +32,6 @@ const Player = ({ id, origin, songObj }) => {
 	const [advanceTenSeconds, setAdvanceTenSeconds] = useState(false);
 	const [controlsReleased, setControlsReleased] = useState(false);
 	const [goBackTenSeconds, setGoBackTenSeconds] = useState(false);
-	const [randomizeChanged, setRandomizeChanged] = useState(true);
 	const [currentTime, setCurrentTime] = useState(formatTime(0));
 	const [rangeVolumeValue, setRangeVolumeValue] = useState(5);
 	const [iconVolume, setIconVolume] = useState(faVolumeXmark);
@@ -50,7 +49,6 @@ const Player = ({ id, origin, songObj }) => {
 	const changeRandomizedSongsValue = () => {
 		setRandomizedSongs(!randomizedSongs);
 		window.localStorage.setItem("randomized_songs", !randomizedSongs);
-		setRandomizeChanged(true);
 	};
 
 	const changeIconVolume = useCallback((volume) => {
@@ -92,13 +90,16 @@ const Player = ({ id, origin, songObj }) => {
 
 	const stopRedirect = (paramId) => {
 		const id = paramId || songProperties.idForward;
-		// const id = paramId || randomIdForward;
+
 		setIsPlaying(false);
-		let path = `/song/${id}`;
-		if (origin === "songs") {
-			path += `/${origin}`;
-		}
-		navigate(path);
+		setTimeout(() => {
+			setControlsReleased(false);
+			let path = `/song/${id}`;
+			if (origin === "songs") {
+				path += `/${origin}`;
+			}
+			navigate(path, { replace: true });
+		}, 1000);
 	};
 
 	const handleMutedVol = () => {
@@ -176,25 +177,22 @@ const Player = ({ id, origin, songObj }) => {
 	);
 
 	useEffect(() => {
-		if (randomizeChanged) {
-			if (songObj !== undefined && songObj !== null) {
-				if (origin === "songs") {
-					getAllSongs().then((songsArray) => {
-						setSongProperties(getRandomizeProperties(songsArray, id));
-						setRandomizeChanged(false);
+		if (songObj !== undefined && songObj !== null) {
+			const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
+			if (origin === "songs") {
+				getAllSongs().then((songsArray) => {
+					setSongProperties(getRandomizeProperties(songsArray, id, randomized));
+				});
+			} else {
+				if (songObj.artist !== undefined) {
+					getSongsByArtistName(songObj.artist).then((artist) => {
+						const songsArray = artist[0].songs;
+						setSongProperties(getRandomizeProperties(songsArray, id, randomized));
 					});
-				} else {
-					if (songObj.artist !== undefined) {
-						getSongsByArtistName(songObj.artist).then((artist) => {
-							const songsArray = artist[0].songs;
-							setSongProperties(getRandomizeProperties(songsArray, id));
-							setRandomizeChanged(false);
-						});
-					}
 				}
 			}
 		}
-	}, [id, origin, songObj, randomizeChanged, songProperties]);
+	}, [id, origin, songObj, randomizedSongs]);
 
 	// Handle keyboard events
 	useEffect(() => {
@@ -237,7 +235,7 @@ const Player = ({ id, origin, songObj }) => {
 
 			setRangeVolumeThumbsPosition();
 		}
-	}, [changeIconVolume, initTimeToggleVolume, isMuted, rangeVolumeValue]);
+	}, [changeIconVolume, isMuted, rangeVolumeValue]);
 
 	return (
 		<div className="player">

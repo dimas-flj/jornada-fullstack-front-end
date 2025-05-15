@@ -26,27 +26,28 @@ const getRandomIndex = (songsArray, id, lastIndex) => {
 	let index;
 	while (!found) {
 		index = Math.floor(Math.random() * (songsArray.length - 1));
-		if (index !== currentIndexFromIdSong && index !== lastIndex && songsArray[index] !== undefined) {
+		if (index !== currentIndexFromIdSong && index !== lastIndex && songsArray[index] !== undefined && id !== songsArray[index]._id) {
 			found = true;
 		}
 	}
-
 	return index;
 };
 
-export const getRandomizeProperties = (songsArray, id) => {
-	let randomIndexBackward, randomIndexForward;
+export const getRandomizeProperties = (songsArray, id, randomized) => {
+	let randomIndexBackward,
+		randomIndexForward = undefined;
 
 	let _idBackward,
 		_idForward,
 		_backwardSongName,
-		_forwardSongName = null;
+		_forwardSongName = undefined;
 
-	let _disableBackwardButton,
-		_disableForwardButton = false;
+	let _disableBackwardButton = false;
+	let _disableForwardButton = false;
 
 	if (songsArray !== undefined && songsArray.length > 0) {
-		const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
+		const currentIndexFromIdSong = songsArray.map((elem) => elem._id).indexOf(id);
+
 		if (randomized) {
 			randomIndexBackward = getRandomIndex(songsArray, id, -1);
 			randomIndexForward = getRandomIndex(songsArray, id, randomIndexBackward);
@@ -56,13 +57,14 @@ export const getRandomizeProperties = (songsArray, id) => {
 			_backwardSongName = songsArray[randomIndexBackward].name;
 			_forwardSongName = songsArray[randomIndexForward].name;
 		} else {
-			const currentIndexFromIdSong = songsArray.map((elem) => elem._id).indexOf(id);
+			randomIndexForward = currentIndexFromIdSong + 1;
+			randomIndexBackward = currentIndexFromIdSong - 1;
 
 			// if is the first song on the list
 			if (currentIndexFromIdSong == 0) {
 				_disableBackwardButton = true;
 
-				const forwardSong = songsArray[currentIndexFromIdSong + 1];
+				const forwardSong = songsArray[randomIndexForward];
 				if (forwardSong !== undefined) {
 					_idForward = forwardSong._id;
 					_forwardSongName = forwardSong.name;
@@ -74,7 +76,7 @@ export const getRandomizeProperties = (songsArray, id) => {
 			else if (currentIndexFromIdSong === songsArray.length - 1) {
 				_disableForwardButton = true;
 
-				const backwardSong = songsArray[currentIndexFromIdSong - 1];
+				const backwardSong = songsArray[randomIndexBackward];
 				if (backwardSong !== undefined) {
 					_idBackward = backwardSong._id;
 					_backwardSongName = backwardSong.name;
@@ -82,11 +84,11 @@ export const getRandomizeProperties = (songsArray, id) => {
 					_disableBackwardButton = true;
 				}
 			} else {
-				const backwardSong = songsArray[currentIndexFromIdSong - 1];
+				const backwardSong = songsArray[randomIndexBackward];
 				_idBackward = backwardSong._id;
 				_backwardSongName = backwardSong.name;
 
-				const forwardSong = songsArray[currentIndexFromIdSong + 1];
+				const forwardSong = songsArray[randomIndexForward];
 				_idForward = forwardSong._id;
 				_forwardSongName = forwardSong.name;
 			}

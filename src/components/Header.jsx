@@ -7,13 +7,13 @@ const Header = () => {
 		<div className="header-container">
 			<div className="header">
 				<Link to="/">
-					<img src={logoSpotify} alt="Logo Spotify" />
+					<img src={logoSpotify} alt="Logo Spotify" className="header__img" />
 				</Link>
 
 				<InputSearch />
 
-				<Link className="header__link" to="/">
-					<h1>Spotify</h1>
+				<Link to="/">
+					<h1 className="header__link">Spotify</h1>
 				</Link>
 			</div>
 		</div>
