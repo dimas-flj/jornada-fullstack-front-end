@@ -24,7 +24,7 @@ const ItemList = ({ origin }) => {
 				setItemsArray(songsArray);
 			});
 		}
-	}, [origin, setItemsArray]);
+	}, [origin]);
 
 	return (
 		<div className="item-list">

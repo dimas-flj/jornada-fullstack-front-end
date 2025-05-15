@@ -128,20 +128,18 @@ const InputSearch = () => {
 	};
 
 	useEffect(() => {
-		if (items.length === 0) {
-			getSongsWithArtist().then((songs) => {
-				const results = songs.map((song) => ({
-					songId: song._id,
-					songName: song.name,
-					songImage: song.image,
-					artistId: song.artist[0]._id,
-					artistName: song.artist[0].name,
-					artistImage: song.artist[0].image,
-				}));
-				setItems(results);
-			});
-		}
-	}, [items]);
+		getSongsWithArtist().then((songs) => {
+			const results = songs.map((song) => ({
+				songId: song._id,
+				songName: song.name,
+				songImage: song.image,
+				artistId: song.artist[0]._id,
+				artistName: song.artist[0].name,
+				artistImage: song.artist[0].image,
+			}));
+			setItems(results);
+		});
+	}, []);
 
 	useEffect(() => {
 		const input_search = inputSearch.current;

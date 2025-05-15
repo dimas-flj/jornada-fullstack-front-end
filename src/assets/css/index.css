@@ -713,9 +713,7 @@ body:has(.range__volume:hover) .range__volume-label {
 
 /* Input search suggestions */
 .search {
-	position: absolute;
 	max-height: 100svh;
-	width: 95%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -742,7 +740,7 @@ body:has(.range__volume:hover) .range__volume-label {
 	max-height: 300px;
 	height: auto;
 	overflow-y: auto;
-	width: 120%;
+	width: 130%;
 	left: 1px;
 	top: 43px;
 	background-color: rgb(3, 94, 42);

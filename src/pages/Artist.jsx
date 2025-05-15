@@ -18,28 +18,32 @@ const Artist = () => {
 	const { id } = useParams();
 
 	useEffect(() => {
-		if (id !== undefined) {
-			getSongsByArtistId(id).then((artistObj) => {
-				const localArtist = artistObj[0];
-				setArtist(localArtist);
+		getSongsByArtistId(id).then((artistObj) => {
+			const localArtist = artistObj[0];
+			setArtist(localArtist);
 
-				const songs_array = localArtist.songs;
-				setSongs(songs_array);
+			const songs_array = localArtist.songs;
+			setSongs(songs_array);
 
-				const randomIndex = Math.floor(Math.random() * (songs_array.length - 1));
+			const randomIndex = Math.floor(Math.random() * (songs_array.length - 1));
 
-				setRandomIdFromArtist(songs_array[randomIndex]._id);
-				setSongNameFromArtist(songs_array[randomIndex].name);
-			});
+			setRandomIdFromArtist(songs_array[randomIndex]._id);
+			setSongNameFromArtist(songs_array[randomIndex].name);
+		});
 
-			toLabelSong.current.addEventListener("mouseover", () => {
-				labelSong.current.style.opacity = 1;
-			});
+		const toLabel = toLabelSong.current;
+		toLabel.addEventListener("mouseover", () => {
+			labelSong.current.style.opacity = 1;
+		});
 
-			toLabelSong.current.addEventListener("mouseout", () => {
-				labelSong.current.style.opacity = 0;
-			});
-		}
+		toLabel.addEventListener("mouseout", () => {
+			labelSong.current.style.opacity = 0;
+		});
+
+		return () => {
+			toLabel.removeEventListener("mouseover", () => {});
+			toLabel.removeEventListener("mouseout", () => {});
+		};
 	}, [id]);
 
 	return (

@@ -143,7 +143,6 @@ const Player = ({ id, origin, songObj }) => {
 			if (signal === "-" || signal === "+") {
 				e.preventDefault();
 
-				// if (e.keyCode === 107 || e.keyCode === 109) {
 				setInitTimeToggleVolume(Date.now());
 
 				let classList = divRangeAudioVolume.current.classList.toString();
@@ -156,11 +155,9 @@ const Player = ({ id, origin, songObj }) => {
 				const range = rangeAudioVolume.current;
 				let level = Number(range.value);
 				if (signal === "+" && level < 10) {
-					// if (e.keyCode === 107 && level < 10) {
 					level++;
 				}
 				if (signal === "-" && level > 0) {
-					// if (e.keyCode === 109 && level > 0) {
 					level--;
 				}
 				setRangeVolumeValue(level);
@@ -176,26 +173,27 @@ const Player = ({ id, origin, songObj }) => {
 		[getPlusMinusSignal]
 	);
 
+	// Handle controllers songs navigation
 	useEffect(() => {
-		if (songObj !== undefined && songObj !== null) {
-			const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
-			if (origin === "songs") {
-				getAllSongs().then((songsArray) => {
+		console.log("entrei 1");
+		const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
+		if (origin === "songs") {
+			getAllSongs().then((songsArray) => {
+				setSongProperties(getRandomizeProperties(songsArray, id, randomized));
+			});
+		} else {
+			if (songObj.artist !== undefined) {
+				getSongsByArtistName(songObj.artist).then((artist) => {
+					const songsArray = artist[0].songs;
 					setSongProperties(getRandomizeProperties(songsArray, id, randomized));
 				});
-			} else {
-				if (songObj.artist !== undefined) {
-					getSongsByArtistName(songObj.artist).then((artist) => {
-						const songsArray = artist[0].songs;
-						setSongProperties(getRandomizeProperties(songsArray, id, randomized));
-					});
-				}
 			}
 		}
 	}, [id, origin, songObj, randomizedSongs]);
 
 	// Handle keyboard events
 	useEffect(() => {
+		console.log("entrei 2");
 		document.addEventListener("keydown", handleKeyDown, false);
 		document.addEventListener("keyup", cleanListKeys, false);
 
@@ -207,6 +205,7 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle current time
 	useEffect(() => {
+		console.log("entrei 3");
 		if (!isMobile()) {
 			const interval = setInterval(() => {
 				// hide container audio volume
@@ -223,6 +222,7 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle input audio/range volume
 	useEffect(() => {
+		console.log("entrei 4");
 		if (!isMobile()) {
 			const range = rangeAudioVolume.current;
 			if (isMuted) {
@@ -240,7 +240,7 @@ const Player = ({ id, origin, songObj }) => {
 	return (
 		<div className="player">
 			<div className="player__controllers">
-				<LightTooltip title={songProperties.songNameBackward} placement="top">
+				<LightTooltip title={songProperties.disableBackwardButton || !controlsReleased ? "" : songProperties.songNameBackward} placement="top">
 					<FontAwesomeIcon
 						className={songProperties.disableBackwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
 						icon={faBackwardStep}
@@ -250,7 +250,7 @@ const Player = ({ id, origin, songObj }) => {
 					/>
 				</LightTooltip>
 
-				<LightTooltip title="10 segundos" placement="top">
+				<LightTooltip title={songProperties.disableBackwardButton || !controlsReleased ? "" : "-10 segundos"} placement="top">
 					<img
 						src={tenBackward}
 						alt="Retorna 10 segundos"
@@ -263,7 +263,7 @@ const Player = ({ id, origin, songObj }) => {
 					/>
 				</LightTooltip>
 
-				<LightTooltip title={isPlaying ? "Pausar" : "Executar"} placement="top">
+				<LightTooltip title={songProperties.disableBackwardButton || !controlsReleased ? "" : isPlaying ? "Pausar" : "Executar"} placement="top">
 					<FontAwesomeIcon
 						className={!controlsReleased ? "player__icon--charging" : "player__icon player__icon--play"}
 						icon={isPlaying ? faCirclePause : faCirclePlay}
@@ -273,7 +273,7 @@ const Player = ({ id, origin, songObj }) => {
 					/>
 				</LightTooltip>
 
-				<LightTooltip title="10 segundos" placement="top">
+				<LightTooltip title={songProperties.disableBackwardButton || !controlsReleased ? "" : "+10 segundos"} placement="top">
 					<img
 						src={tenForward}
 						alt="Avança 10 segundos"
@@ -286,7 +286,7 @@ const Player = ({ id, origin, songObj }) => {
 					/>
 				</LightTooltip>
 
-				<LightTooltip title={songProperties.songNameForward} placement="top">
+				<LightTooltip title={songProperties.disableBackwardButton || !controlsReleased ? "" : songProperties.songNameForward} placement="top">
 					<FontAwesomeIcon
 						className={songProperties.disableForwardButton || !controlsReleased ? "player__icon--disabled" : "player__icon"}
 						icon={faForwardStep}

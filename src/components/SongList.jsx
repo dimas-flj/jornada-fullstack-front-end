@@ -11,7 +11,7 @@ const SongList = ({ songsArray }) => {
 		} else {
 			setLabelOnClick(items < songsArray.length ? "Ver mais" : "Recolher");
 		}
-	}, [items, songsArray.length]);
+	}, [items, songsArray]);
 
 	return (
 		<>
