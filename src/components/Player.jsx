@@ -175,7 +175,6 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle controllers songs navigation
 	useEffect(() => {
-		console.log("entrei 1");
 		const randomized = JSON.parse(window.localStorage.getItem("randomized_songs"));
 		if (origin === "songs") {
 			getAllSongs().then((songsArray) => {
@@ -193,7 +192,6 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle keyboard events
 	useEffect(() => {
-		console.log("entrei 2");
 		document.addEventListener("keydown", handleKeyDown, false);
 		document.addEventListener("keyup", cleanListKeys, false);
 
@@ -205,7 +203,6 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle current time
 	useEffect(() => {
-		console.log("entrei 3");
 		if (!isMobile()) {
 			const interval = setInterval(() => {
 				// hide container audio volume
@@ -222,7 +219,6 @@ const Player = ({ id, origin, songObj }) => {
 
 	// Handle input audio/range volume
 	useEffect(() => {
-		console.log("entrei 4");
 		if (!isMobile()) {
 			const range = rangeAudioVolume.current;
 			if (isMuted) {
