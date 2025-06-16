@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { formatTime } from "../scripts/util";
 
 const InputRangeSong = ({
@@ -7,7 +7,7 @@ const InputRangeSong = ({
 	setDuration,
 	isPlaying,
 	setIsPlaying,
-	setCurrentTime,
+	timeLapse,
 	rangeVolumeValue,
 	isMuted,
 	goBackTenSeconds,
@@ -18,7 +18,7 @@ const InputRangeSong = ({
 	controlsReleased,
 	setControlsReleased,
 }) => {
-	const [lastInputValue, setLastInputValue] = useState(0);
+	const lastInputValue = useRef(0);
 
 	const rangeProgressbar = useRef();
 	const audioPlayer = useRef();
@@ -27,9 +27,9 @@ const InputRangeSong = ({
 	const resetControllers = () => {
 		audioPlayer.current.pause();
 		setDuration(audioPlayer.current.duration | 0);
-		setCurrentTime(formatTime(0));
+		timeLapse.current.textContent = formatTime(0);
 		setControlsReleased(true);
-		setIsPlaying(!isPlaying);
+		setIsPlaying(true);
 
 		const range = rangeProgressbar.current;
 		range.value = 0;
@@ -42,10 +42,10 @@ const InputRangeSong = ({
 		const audio = e.target;
 		const range = rangeProgressbar.current;
 
-		setCurrentTime(formatTime(audio.currentTime));
+		timeLapse.current.textContent = formatTime(audio.currentTime);
 		range.value = audio.currentTime | 0;
 
-		setLastInputValue(Number(range.value));
+		lastInputValue.current = Number(range.value);
 
 		const value = ((range.value - range.min) / (range.max - range.min)) * 100;
 		rangeProgressbar.current.style.background = `linear-gradient(to right, rgb(119, 101, 101) 0%, rgb(119, 101, 101) ${value}%, silver ${value}%, silver 100%)`;
@@ -57,16 +57,16 @@ const InputRangeSong = ({
 		const rangeValue = Number(rangeProgressbar.current.value);
 		const newValue = rangeValue - 10;
 		rangeProgressbar.current.value = newValue;
-		setLastInputValue(newValue);
+		lastInputValue.current = newValue;
 
 		audioPlayer.current.currentTime = parseFloat(newValue).toFixed(1);
-		setCurrentTime(formatTime(audioPlayer.current.currentTime));
+		timeLapse.current.textContent = formatTime(audioPlayer.current.currentTime);
 
 		setGoBackTenSeconds(false);
 		if (isPlaying) {
 			audioPlayer.current.play();
 		}
-	}, [isPlaying, audioPlayer, rangeProgressbar, setLastInputValue, setCurrentTime, setGoBackTenSeconds]);
+	}, [isPlaying, audioPlayer, rangeProgressbar, lastInputValue, timeLapse, setGoBackTenSeconds]);
 
 	const fastForward = useCallback(() => {
 		audioPlayer.current.pause();
@@ -74,29 +74,29 @@ const InputRangeSong = ({
 		const rangeValue = Number(rangeProgressbar.current.value);
 		const newValue = rangeValue + 10;
 		rangeProgressbar.current.value = newValue;
-		setLastInputValue(newValue);
+		lastInputValue.current = newValue;
 
 		audioPlayer.current.currentTime = parseFloat(newValue).toFixed(1);
-		setCurrentTime(formatTime(audioPlayer.current.currentTime));
+		timeLapse.current.textContent = formatTime(audioPlayer.current.currentTime);
 
 		setAdvanceTenSeconds(false);
 		if (isPlaying) {
 			audioPlayer.current.play();
 		}
-	}, [isPlaying, audioPlayer, rangeProgressbar, setCurrentTime, setAdvanceTenSeconds]);
+	}, [isPlaying, audioPlayer, rangeProgressbar, timeLapse, lastInputValue, setAdvanceTenSeconds]);
 
 	const changeCurrentTrailSong = useCallback(
 		(newValue) => {
 			audioPlayer.current.pause();
 
 			audioPlayer.current.currentTime = parseFloat(newValue).toFixed(1);
-			setCurrentTime(formatTime(parseFloat(newValue).toFixed(1)));
-			setLastInputValue(newValue);
+			timeLapse.current.textContent = formatTime(parseFloat(newValue).toFixed(1));
+			lastInputValue.current = newValue;
 			if (isPlaying) {
 				audioPlayer.current.play();
 			}
 		},
-		[isPlaying, setCurrentTime, audioPlayer, setLastInputValue]
+		[isPlaying, timeLapse, audioPlayer, lastInputValue]
 	);
 
 	const handleKeyCode = useCallback(
@@ -113,11 +113,11 @@ const InputRangeSong = ({
 				let newValue = 0;
 				// <- left key (e.keyCode === 37)
 				if (e.keyCode === 37) {
-					newValue = lastInputValue - 1;
+					newValue = lastInputValue.current - 1;
 				}
 				// -> rigth key (e.keyCode === 39)
 				else {
-					newValue = lastInputValue + 1;
+					newValue = lastInputValue.current + 1;
 				}
 
 				if (newValue < 0) {
@@ -150,7 +150,7 @@ const InputRangeSong = ({
 				fastForward();
 			}
 		}
-	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, controlsReleased]);
+	}, [isMuted, isPlaying, audioPlayer, rangeVolumeValue, goBackTenSeconds, advanceTenSeconds, fastBackward, fastForward, controlsReleased, duration]);
 
 	// handle keycode event
 	useEffect(() => {
