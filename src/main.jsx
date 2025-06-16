@@ -1,10 +1,9 @@
-// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 
 const storage = window.localStorage;
 
-if (storage.getItem("randomized_songs") === null) {
+if (!storage.getItem("randomized_songs")) {
 	storage.setItem("randomized_songs", false);
 }
 
