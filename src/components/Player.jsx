@@ -32,18 +32,18 @@ const Player = ({ id, origin, songObj }) => {
 	const [advanceTenSeconds, setAdvanceTenSeconds] = useState(false);
 	const [controlsReleased, setControlsReleased] = useState(false);
 	const [goBackTenSeconds, setGoBackTenSeconds] = useState(false);
-	const [currentTime, setCurrentTime] = useState(formatTime(0));
 	const [rangeVolumeValue, setRangeVolumeValue] = useState(5);
 	const [iconVolume, setIconVolume] = useState(faVolumeXmark);
 	const [pressedKeys, setPressedKeys] = useState(new Set());
 	const [songProperties, setSongProperties] = useState({});
-	const [toolTipVolume, setToolTipVolume] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const [duration, setDuration] = useState(0);
 
 	const divRangeAudioVolume = useRef();
 	const rangeAudioVolume = useRef();
+	const toolTipVolume = useRef();
+	const timeLapse = useRef();
 	const tooltip = useRef();
 
 	const changeRandomizedSongsValue = () => {
@@ -161,6 +161,7 @@ const Player = ({ id, origin, songObj }) => {
 					level--;
 				}
 				setRangeVolumeValue(level);
+
 				setTimeout(() => {
 					classList = tooltip.current.classList.toString();
 					isToggle = classList.indexOf("toggle") > -1;
@@ -225,13 +226,13 @@ const Player = ({ id, origin, songObj }) => {
 				setIconVolume(faVolumeXmark);
 			} else {
 				range.value = rangeVolumeValue;
-				setToolTipVolume(rangeVolumeValue);
+				tooltip.current.textContent = rangeVolumeValue;
 				changeIconVolume(rangeVolumeValue);
 			}
 
 			setRangeVolumeThumbsPosition();
 		}
-	}, [changeIconVolume, isMuted, rangeVolumeValue]);
+	}, [changeIconVolume, isMuted, rangeVolumeValue, toolTipVolume]);
 
 	return (
 		<div className="player">
@@ -304,13 +305,13 @@ const Player = ({ id, origin, songObj }) => {
 					</div>
 				</LightTooltip>
 
-				<p>{currentTime}</p>
+				<p ref={timeLapse}>{formatTime(0)}</p>
 				<InputRangeSong
 					disabled={!controlsReleased}
 					songUrl={songObj.audio}
 					duration={duration}
 					setDuration={setDuration}
-					setCurrentTime={setCurrentTime}
+					timeLapse={timeLapse}
 					isPlaying={isPlaying}
 					setIsPlaying={setIsPlaying}
 					rangeVolumeValue={rangeVolumeValue}
@@ -331,7 +332,7 @@ const Player = ({ id, origin, songObj }) => {
 					{!isMobile() ? (
 						<>
 							<span ref={tooltip} className="range__volume-label">
-								{toolTipVolume}
+								{rangeVolumeValue}
 							</span>
 
 							<div ref={divRangeAudioVolume} className="volume">
