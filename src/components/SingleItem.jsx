@@ -22,7 +22,7 @@ const SingleItem = ({ origin, item }) => {
 					<p className="single-item__title">{item.name}</p>
 				</div>
 
-				<p className="single-item__type">{item.artist ?? "Artistas"}</p>
+				<p className="single-item__type">{item.artist ?? "Artista"}</p>
 			</div>
 		</Link>
 	);
