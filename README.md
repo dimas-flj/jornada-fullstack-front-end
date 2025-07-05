@@ -1,4 +1,4 @@
-# <img src="./src/assets/images/gramofone_512x512.png" alt="Logo Spotify" style="width:70px"/>&nbsp;&nbsp;<span style="position:absolute; top:20px;">Projeto Clone da Plataforma Spotify</span>
+# <img src="./src/assets/images/gramofone_512x512.png" alt="Logo Spotify" style="width:70px"/>&nbsp;&nbsp;<span style="position:absolute; top:20px;">Projeto Clone da Plataforma Spotify (Client)</span>
 
 ## Sobre
 
@@ -6,7 +6,8 @@ Este projeto foi idealizado pelo empresa [Hashtag Treinamentos](https://www.hash
 
 ## Objetivo
 
-Este projeto tem por objetivo a criação de um módulo front-end que reproduz a conhecida plataforma de músicas Spotify.
+Este projeto tem por objetivo a criação de um módulo front-end que reproduz a conhecida plataforma de músicas Spotify.<br/>
+O projeto que disponibiliza as APIs que este módulo consome pode ser visualizado através do repositório [jornada-fullstack-back-end](https://github.com/dimas-flj/jornada-fullstack-back-end/).
 
 ## Disponibilização
 
@@ -14,7 +15,20 @@ A vizualização deste projeto em execução está disponível através do link 
 
 ## Tecnologias usadas
 
-[Node JS (v22.14.0)](https://nodejs.org/pt/blog/release/v22.14.0) + [Npm (v11.4.0)](https://nodejs.org/pt/blog/release/v11.4.0) + [React JS(v19.0.0)](https://react.dev/blog/2024/12/05/react-19) + [Vite (v6.2.0)](https://www.npmjs.com/package/vite/v/6.2.0)
+<ol>
+  <li>
+    <a href="https://nodejs.org/pt/blog/release/v22.14.0" style="text-decoration:none">Node JS (v22.14.0)</a>
+  </li>
+  <li>
+    <a href="https://nodejs.org/pt/blog/release/v11.4.0" style="text-decoration:none">Npm (v11.4.0)</a>
+  </li>
+  <li>
+    <a href="https://react.dev/blog/2024/12/05/react-19" style="text-decoration:none">React JS(v19.0.0)</a>
+  </li>
+  <li>
+    <a href="https://www.npmjs.com/package/vite/v/6.2.0" style="text-decoration:none">Vite (v6.2.0)</a>
+  </li>
+</ol>
 
 ## Dependências
 
@@ -33,6 +47,14 @@ A vizualização deste projeto em execução está disponível através do link 
 | [@fortawesome/free-regular-svg-icons](https://www.npmjs.com/package/@fortawesome/free-regular-svg-icons) | 6.7.2   | npm install @fortawesome/free-regular-svg-icons@6.7.2 |
 | [@fortawesome/free-solid-svg-icons](http://npmjs.com/package/@fortawesome/free-solid-svg-icons)          | 6.7.2   | npm install @fortawesome/free-solid-svg-icons@6.7.2   |
 
+## Tutorial
+
+Acesse esse link do [tutorial](https://vite.dev/guide/) para entender o funcionamento de criação de um projeto React JS + Vite.
+
 ## Créditos
 
-[Hashtag Treinamentos](https://www.hashtagtreinamentos.com/)
+<ul>
+  <li>
+  <a style="text-decoration:none;" href="https://www.hashtagtreinamentos.com/" target="_blank">Hashtag Treinamentos</a>
+  </li>
+</ul>
