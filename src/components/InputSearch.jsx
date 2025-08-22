@@ -247,9 +247,9 @@ const InputSearch = () => {
 				songId: song._id,
 				songName: song.name,
 				songImage: song.image,
-				artistId: song.artist[0]._id,
-				artistName: song.artist[0].name,
-				artistImage: song.artist[0].image,
+				artistName: song.artist,
+				artistId: song.artistObj._id,
+				artistImage: song.artistObj.image,
 			}));
 			setItems(results);
 		});

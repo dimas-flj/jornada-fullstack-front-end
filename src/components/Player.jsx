@@ -184,7 +184,7 @@ const Player = ({ id, origin, songObj }) => {
 		} else {
 			if (songObj.artist !== undefined) {
 				getSongsByArtistName(songObj.artist).then((artist) => {
-					const songsArray = artist[0].songs;
+					const songsArray = artist.songs;
 					setSongProperties(getRandomizeProperties(songsArray, id, randomized));
 				});
 			}

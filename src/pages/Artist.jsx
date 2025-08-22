@@ -3,7 +3,7 @@ import { faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
-import { getSongsByArtistId } from "../scripts/api_service";
+import { getSongsByArtistId } from "../scripts/api_service.js";
 import SongList from "../components/SongList";
 
 const Artist = () => {
@@ -18,11 +18,10 @@ const Artist = () => {
 	const { id } = useParams();
 
 	useEffect(() => {
-		getSongsByArtistId(id).then((artistObj) => {
-			const localArtist = artistObj[0];
-			setArtist(localArtist);
+		getSongsByArtistId(id).then((artistSong) => {
+			setArtist(artistSong);
 
-			const songs_array = localArtist.songs;
+			const songs_array = artistSong.songs;
 			setSongs(songs_array);
 
 			const randomIndex = Math.floor(Math.random() * (songs_array.length - 1));

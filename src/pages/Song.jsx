@@ -10,12 +10,10 @@ const Song = () => {
 	const [song, setSong] = useState({});
 
 	useEffect(() => {
-		getArtistSongBySongId(id).then((current) => {
-			const artistAndSong = current[0];
-
+		getArtistSongBySongId(id).then((artistAndSong) => {
 			setArtist(artistAndSong);
-			const song = artistAndSong.song;
 
+			const song = artistAndSong.song;
 			if (song.audio.endsWith(".mp3")) {
 				song.audio = `${song.audio}?t=${Date.now()}`;
 			} else {
